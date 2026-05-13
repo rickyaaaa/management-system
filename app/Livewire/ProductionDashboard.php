@@ -21,6 +21,20 @@ class ProductionDashboard extends Component
 
     public function selectTask($id)
     {
+        $task = Task::find($id);
+
+        if ($task && $task->status === 'pending') {
+            $task->update(['status' => 'in_progress']);
+            TaskLog::create([
+                'task_id' => $task->id,
+                'user_id' => auth()->id(),
+                'previous_status' => 'pending',
+                'new_status' => 'in_progress',
+                'action_note' => 'Task accepted and in progress',
+            ]);
+            $this->dispatch('notify', message: 'Task accepted! You can now submit your work.');
+        }
+
         $this->selectedTaskId = $id;
     }
 
@@ -29,15 +43,15 @@ class ProductionDashboard extends Component
         $this->validate([
             'selectedTaskId' => 'required|exists:tasks,id',
             'file_blend' => 'required|file|max:102400', // 100MB max
-            'file_mov' => 'required|mimes:mp4,mov,avi|max:102400', // 100MB max
+            'file_mov' => 'required|extensions:mp4,mov,avi|max:102400', // 100MB max
             'notes' => 'nullable|string',
         ]);
 
         $task = Task::findOrFail($this->selectedTaskId);
 
         // Store files
-        $blendPath = $this->file_blend->store(path: 'blend', disk: 'submissions');
-        $movPath = $this->file_mov->store(path: 'mov', disk: 'submissions');
+        $blendPath = $this->file_blend->store('blend', 'submissions');
+        $movPath = $this->file_mov->store('mov', 'submissions');
 
         $version = $task->submissions()->count() + 1;
 

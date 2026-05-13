@@ -25,7 +25,8 @@ class DownloadController extends Controller
         }
 
         if ($type === 'blend') {
-            return Storage::disk('submissions')->download($path);
+            $filename = \Illuminate\Support\Str::slug($task->title) . '_v' . $submission->version . '.blend';
+            return response()->download(Storage::disk('submissions')->path($path), $filename);
         } else {
             // Stream the video (allows seeking in custom video players)
             return response()->file(Storage::disk('submissions')->path($path));

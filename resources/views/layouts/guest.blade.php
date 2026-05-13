@@ -14,16 +14,20 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-            <div>
+    <body class="font-sans antialiased bg-gray-50 text-gray-950 min-h-screen flex items-center justify-center">
+        <div class="w-full sm:max-w-md px-6 py-12 lg:px-8 flex flex-col justify-center">
+            <div class="sm:mx-auto sm:w-full sm:max-w-sm flex justify-center mb-8">
                 <a href="/" wire:navigate>
-                    <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
+                    <div class="w-12 h-12 bg-amber-500 rounded-xl shadow-sm flex items-center justify-center font-bold text-white text-xl ring-1 ring-black/10">
+                        3D
+                    </div>
                 </a>
             </div>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
-                {{ $slot }}
+            <div class="sm:mx-auto sm:w-full sm:max-w-[28rem]">
+                <div class="bg-white px-6 py-8 shadow-sm ring-1 ring-gray-950/5 rounded-2xl sm:px-10">
+                    {{ $slot }}
+                </div>
             </div>
         </div>
     </body>

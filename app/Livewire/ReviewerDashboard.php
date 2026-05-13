@@ -18,6 +18,17 @@ class ReviewerDashboard extends Component
     public $reviewTimestamp = '';
 
     public $viewingSubmissionId = [];
+    public $selectedReviewTaskId = null;
+
+    public function selectTask($taskId)
+    {
+        $this->selectedReviewTaskId = $taskId;
+    }
+
+    public function closeTask()
+    {
+        $this->selectedReviewTaskId = null;
+    }
 
     public function switchVersion($taskId, $submissionId)
     {
@@ -50,6 +61,7 @@ class ReviewerDashboard extends Component
             $admin->notify(new TaskNotification('Task ready for final approval: ' . $task->title, $task->id));
         }
 
+        $this->selectedReviewTaskId = null;
         $this->dispatch('notify', message: 'Submission Approved.');
     }
 
@@ -97,6 +109,7 @@ class ReviewerDashboard extends Component
 
         $this->showModal = false;
         $this->reset(['reviewNotes', 'reviewTimestamp', 'selectedSubmissionId', 'currentTaskId']);
+        $this->selectedReviewTaskId = null;
         $this->dispatch('notify', message: 'Revision requested.');
     }
 

@@ -8,8 +8,9 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -18,21 +19,35 @@
         <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
         <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            <livewire:layout.navigation />
+    <body class="font-sans antialiased text-soft-dark bg-soft-bg relative flex h-screen">
+        
+        <!-- Sidebar Navigation -->
+        <livewire:layout.navigation />
 
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col h-screen overflow-y-auto relative">
+            <!-- Header -->
+            <header class="h-20 px-8 flex items-center justify-between flex-shrink-0 z-10">
+                <div>
+                    @if (isset($header))
                         {{ $header }}
+                    @else
+                        <h1 class="text-2xl font-bold text-soft-dark">Pipeline Control</h1>
+                    @endif
+                </div>
+                <div class="flex items-center space-x-6">
+                    <livewire:notification-bell />
+                    @auth
+                    <div class="hidden sm:flex items-center space-x-2 border-l border-gray-300 pl-6">
+                        <span class="text-xs font-bold text-gray-500 tracking-widest uppercase">CURRENT SESSION:</span>
+                        <span class="text-sm font-extrabold text-soft-dark uppercase">{{ auth()->user()->role_level == 1 ? 'ADMIN' : (auth()->user()->role_level == 3 ? 'REVIEWER' : 'PRODUCTION') }}</span>
                     </div>
-                </header>
-            @endif
+                    @endauth
+                </div>
+            </header>
 
             <!-- Page Content -->
-            <main>
+            <main class="flex-1 overflow-y-auto p-8 pt-2 pb-32">
                 {{ $slot }}
             </main>
         </div>

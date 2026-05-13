@@ -16,6 +16,7 @@ class AdminDashboard extends Component
     public $deadline = '';
     public $priority = 'normal';
     public $detailTaskId = null;
+    public $showModal = false;
 
     public function viewDetails($id)
     {
@@ -77,6 +78,7 @@ class AdminDashboard extends Component
         $assignee->notify(new TaskNotification('New task assigned: ' . $this->title, $task->id));
 
         $this->reset(['title', 'description', 'assignee_id', 'deadline', 'priority']);
+        $this->showModal = false;
         $this->dispatch('notify', message: 'Task successfully created.');
     }
 
@@ -96,10 +98,10 @@ class AdminDashboard extends Component
         ];
         
         $topSpecialist = User::where('role_level', 2)
-            ->withCount(['tasks' => function($q) {
+            ->withCount(['assignedTasks' => function($q) {
                 $q->where('status', 'completed');
             }])
-            ->orderByDesc('tasks_count')
+            ->orderByDesc('assigned_tasks_count')
             ->first();
 
         return view('livewire.admin-dashboard', [

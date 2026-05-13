@@ -1,0 +1,142 @@
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+use App\Models\User;
+use App\Models\Task;
+use App\Models\TaskLog;
+use App\Notifications\TaskNotification;
+
+class ManageTasks extends Component
+{
+    public $showCreateModal = false;
+    public $detailTaskId = null;
+
+    // Create form
+    public $title = '';
+    public $description = '';
+    public $assignee_id = '';
+    public $deadline = '';
+    public $priority = 'normal';
+
+    // Filters
+    public $filterStatus = 'all';
+    public $filterAssignee = '';
+    public $search = '';
+
+    public function openCreate()
+    {
+        $this->resetForm();
+        $this->showCreateModal = true;
+    }
+
+    public function createTask()
+    {
+        $this->validate([
+            'title' => 'required|string|max:150',
+            'assignee_id' => 'required|exists:users,id',
+            'deadline' => 'required|date',
+            'priority' => 'required|in:low,normal,high',
+        ]);
+
+        $task = Task::create([
+            'admin_id' => auth()->id(),
+            'assignee_id' => $this->assignee_id,
+            'title' => $this->title,
+            'description' => $this->description,
+            'deadline' => $this->deadline,
+            'priority' => $this->priority,
+            'status' => 'pending',
+        ]);
+
+        TaskLog::create([
+            'task_id' => $task->id,
+            'user_id' => auth()->id(),
+            'new_status' => 'pending',
+            'action_note' => 'Task created by Admin',
+        ]);
+
+        /** @var \App\Models\User $assignee */
+        $assignee = User::find($this->assignee_id);
+        $assignee->notify(new TaskNotification('New task assigned: ' . $this->title, $task->id));
+
+        $this->showCreateModal = false;
+        $this->resetForm();
+        $this->dispatch('notify', message: 'Task created successfully.');
+    }
+
+    public function markAsCompleted($taskId)
+    {
+        $task = Task::find($taskId);
+        $task->update(['status' => 'completed']);
+        TaskLog::create([
+            'task_id' => $task->id,
+            'user_id' => auth()->id(),
+            'previous_status' => 'ready_for_admin',
+            'new_status' => 'completed',
+            'action_note' => 'Task verified and marked as Completed by Admin.',
+        ]);
+
+        /** @var \App\Models\User $assignee */
+        $assignee = $task->assignee;
+        $assignee->notify(new TaskNotification('Your task "' . $task->title . '" has been Completed!', $task->id));
+
+        $this->dispatch('notify', message: 'Task marked as Completed.');
+    }
+
+    public function viewDetails($id)
+    {
+        $this->detailTaskId = $id;
+    }
+
+    public function closeDetails()
+    {
+        $this->detailTaskId = null;
+    }
+
+    public function resetForm()
+    {
+        $this->reset(['title', 'description', 'assignee_id', 'deadline', 'priority']);
+    }
+
+    public function render()
+    {
+        $query = Task::with('assignee')->latest();
+
+        if ($this->filterStatus !== 'all') {
+            $query->where('status', $this->filterStatus);
+        }
+
+        if ($this->filterAssignee) {
+            $query->where('assignee_id', $this->filterAssignee);
+        }
+
+        if ($this->search) {
+            $query->where('title', 'like', '%' . $this->search . '%');
+        }
+
+        $detailTask = $this->detailTaskId ? Task::with(['submissions' => function($q){
+            $q->latest();
+        }, 'logs' => function($q){
+            $q->latest();
+        }, 'logs.user', 'assignee'])->find($this->detailTaskId) : null;
+
+        $statusCounts = [
+            'all' => Task::count(),
+            'pending' => Task::where('status', 'pending')->count(),
+            'in_progress' => Task::where('status', 'in_progress')->count(),
+            'awaiting_review' => Task::where('status', 'awaiting_review')->count(),
+            'revision' => Task::where('status', 'revision')->count(),
+            'ready_for_admin' => Task::where('status', 'ready_for_admin')->count(),
+            'completed' => Task::where('status', 'completed')->count(),
+        ];
+
+        return view('livewire.manage-tasks', [
+            'tasks' => $query->get(),
+            'detailTask' => $detailTask,
+            'statusCounts' => $statusCounts,
+            'productionUsers' => User::where('role_level', 2)->get(),
+        ]);
+    }
+}
