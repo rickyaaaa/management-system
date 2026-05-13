@@ -1,9 +1,14 @@
 <div>
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
-        <div>
-            <h3 class="text-xl font-bold text-soft-dark">Task Management</h3>
-            <p class="text-sm text-gray-400 mt-1">Create, filter, and track all production tasks</p>
+        <div class="flex items-center">
+            <a href="{{ route('dashboard') }}" wire:navigate class="mr-4 p-2.5 bg-white rounded-xl shadow-soft-sm text-gray-400 hover:text-purple-600 transition border border-gray-50">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            </a>
+            <div>
+                <h3 class="text-xl font-bold text-soft-dark">Task Management</h3>
+                <p class="text-sm text-gray-400 mt-1">Create, filter, and track all production tasks</p>
+            </div>
         </div>
         <button wire:click="openCreate" class="bg-gradient-to-tl from-purple-700 to-pink-500 hover:from-purple-600 hover:to-pink-400 text-white px-5 py-2.5 rounded-xl font-semibold shadow-soft-sm hover:shadow-soft transition flex items-center">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
@@ -147,7 +152,7 @@
 
     <!-- Create Task Modal -->
     @if($showCreateModal)
-    <div class="fixed inset-0 z-50 bg-gray-900 bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div wire:click.self="$set('showCreateModal', false)" class="fixed inset-0 z-50 bg-gray-900 bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl w-full max-w-2xl shadow-soft-hover border-0">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                 <h3 class="text-xl font-bold text-soft-dark">Create New Task</h3>
@@ -203,7 +208,7 @@
 
     <!-- Task Details Modal -->
     @if($detailTask)
-    <div class="fixed inset-0 z-50 bg-gray-900 bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div wire:click.self="closeDetails" class="fixed inset-0 z-50 bg-gray-900 bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-soft-hover border-0">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                 <h3 class="text-xl font-bold text-soft-dark">{{ $detailTask->title }} <span class="text-sm font-normal text-gray-400">v{{ $detailTask->version }}</span></h3>

@@ -1,9 +1,14 @@
 <div>
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
-        <div>
-            <h3 class="text-xl font-bold text-soft-dark">Production Specialists</h3>
-            <p class="text-sm text-gray-400 mt-1">Manage production specialist access and roles</p>
+        <div class="flex items-center">
+            <a href="{{ route('dashboard') }}" wire:navigate class="mr-4 p-2.5 bg-white rounded-xl shadow-soft-sm text-gray-400 hover:text-purple-600 transition border border-gray-50">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            </a>
+            <div>
+                <h3 class="text-xl font-bold text-soft-dark">Production Specialists</h3>
+                <p class="text-sm text-gray-400 mt-1">Manage production specialist access and roles</p>
+            </div>
         </div>
         <button wire:click="openCreate" class="bg-gradient-to-tl from-purple-700 to-pink-500 hover:from-purple-600 hover:to-pink-400 text-white px-5 py-2.5 rounded-xl font-semibold shadow-soft-sm hover:shadow-soft transition flex items-center">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
@@ -84,7 +89,7 @@
 
     <!-- Create/Edit Modal -->
     @if($showModal)
-    <div class="fixed inset-0 z-50 bg-gray-900 bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div wire:click.self="$set('showModal', false)" class="fixed inset-0 z-50 bg-gray-900 bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl w-full max-w-lg shadow-soft-hover border-0">
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                 <h3 class="text-lg font-bold text-soft-dark">{{ $editMode ? 'Edit Specialist' : 'Add New Specialist' }}</h3>
@@ -141,7 +146,7 @@
 
     <!-- Delete Confirmation Modal -->
     @if($confirmDeleteId)
-    <div class="fixed inset-0 z-50 bg-gray-900 bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div wire:click.self="cancelDelete" class="fixed inset-0 z-50 bg-gray-900 bg-opacity-40 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl w-full max-w-sm shadow-soft-hover border-0 p-6 text-center">
             <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
