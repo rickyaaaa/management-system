@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 
@@ -42,4 +43,17 @@ class User extends Authenticatable implements FilamentUser
     public function submissions() { return $this->hasMany(Submission::class, 'production_id'); }
     public function reviews() { return $this->hasMany(Review::class, 'reviewer_id'); }
     public function taskLogs() { return $this->hasMany(TaskLog::class, 'user_id'); }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Check if the user (via their role) has a specific permission.
+     */
+    public function hasPermission(string $permission): bool
+    {
+        return $this->role?->hasPermission($permission) ?? false;
+    }
 }

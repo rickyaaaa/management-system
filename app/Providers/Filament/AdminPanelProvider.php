@@ -29,10 +29,31 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Violet,
             ])
+            ->font('Inter')
             ->brandName('3D Pipeline')
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::HEAD_END,
+                fn (): string => \Illuminate\Support\Facades\Blade::render('
+                    <style>
+                        /* Sidebar differentiation for Better UX */
+                        html:not(.dark) .fi-sidebar {
+                            background-color: #f8fafc !important; /* Slate 50 */
+                            border-right: 1px solid #e2e8f0 !important;
+                        }
+                        
+                        .dark .fi-sidebar {
+                            background-color: #0a0a0f !important; /* Deep dark indigo */
+                            border-right: 1px solid #1a1a24 !important;
+                        }
+                    </style>
+                ')
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            ->pages([])
+            ->pages([
+                \App\Filament\Pages\Dashboard::class,
+            ])
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
             ->middleware([
                 EncryptCookies::class,

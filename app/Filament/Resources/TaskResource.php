@@ -20,6 +20,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
 use BackedEnum;
+use UnitEnum;
 
 class TaskResource extends Resource
 {
@@ -27,7 +28,9 @@ class TaskResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
-    protected static ?string $navigationLabel = 'Manage Tasks';
+    protected static ?string $navigationLabel = 'Kelola Tugas';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Admin Panel';
 
     protected static ?int $navigationSort = 1;
 
