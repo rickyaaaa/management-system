@@ -37,25 +37,15 @@ class ProductionSubmissionSummary extends BaseWidget
                     ->badge()
                     ->color('info'),
 
-                TextColumn::make('file_blend_url')
-                    ->label('File .blend')
+                TextColumn::make('file_url')
+                    ->label('File Submission')
                     ->formatStateUsing(function (?string $state): string {
-                        if (!$state) {
-                            return '—';
-                        }
-                        return '📦 ' . basename($state);
+                        if (!$state) return '—';
+                        $ext = strtolower(pathinfo($state, PATHINFO_EXTENSION));
+                        $icon = in_array($ext, ['mp4', 'mov', 'avi']) ? '🎬' : '📦';
+                        return "{$icon} " . basename($state);
                     })
-                    ->limit(30),
-
-                TextColumn::make('file_mov_url')
-                    ->label('Preview Video')
-                    ->formatStateUsing(function (?string $state): string {
-                        if (!$state) {
-                            return '—';
-                        }
-                        return '🎬 ' . basename($state);
-                    })
-                    ->limit(30),
+                    ->limit(35),
 
                 TextColumn::make('task.status')
                     ->label('Status Tugas')

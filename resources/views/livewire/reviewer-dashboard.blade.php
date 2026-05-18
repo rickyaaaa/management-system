@@ -142,7 +142,7 @@
                             }
                          }">
                         <video x-ref="video" class="w-full" preload="metadata" crossorigin playsinline controls>
-                            <source src="{{ route('secure.file', [$activeSubmission->id, 'mov']) }}" type="video/mp4">
+                        <source src="{{ route('secure.file', $activeSubmission->id) }}" type="video/mp4">
                         </video>
                     </div>
                     @else
@@ -272,12 +272,8 @@
             <div class="bg-indigo-50 rounded-2xl p-5 border border-indigo-100">
                 <h4 class="font-bold text-indigo-900 mb-3">Asset Downloads</h4>
                 <div class="space-y-2">
-                    <a href="{{ route('secure.file', [$activeSubmission->id, 'mov']) }}" download class="w-full px-4 py-2 bg-white hover:bg-gray-50 text-indigo-700 border border-indigo-200 rounded-xl text-sm font-bold transition shadow-sm flex justify-between items-center">
-                        <span>Preview Video (.mov)</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    </a>
-                    <a href="{{ route('secure.file', [$activeSubmission->id, 'blend']) }}" class="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-sm transition text-sm flex justify-between items-center">
-                        <span>Source File (.blend)</span>
+                    <a href="{{ route('secure.file', $activeSubmission->id) }}" target="_blank" class="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-sm transition text-sm flex justify-between items-center">
+                        <span>Download / Open File</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                     </a>
                 </div>

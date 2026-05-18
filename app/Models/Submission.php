@@ -16,23 +16,14 @@ class Submission extends Model
     public function production() { return $this->belongsTo(User::class, 'production_id'); }
     public function reviews() { return $this->hasMany(Review::class); }
 
-    public function getBlendSizeAttribute()
+    public function getFileSizeAttribute()
     {
         try {
-            $bytes = \Illuminate\Support\Facades\Storage::disk('submissions')->size($this->file_blend_url);
-            return \Illuminate\Support\Number::fileSize($bytes);
-        } catch (\Exception $e) {
-            return 'Unknown';
-        }
-    }
-
-    public function getMovSizeAttribute()
-    {
-        try {
-            $bytes = \Illuminate\Support\Facades\Storage::disk('submissions')->size($this->file_mov_url);
+            $bytes = \Illuminate\Support\Facades\Storage::disk('submissions')->size($this->file_url);
             return \Illuminate\Support\Number::fileSize($bytes);
         } catch (\Exception $e) {
             return 'Unknown';
         }
     }
 }
+

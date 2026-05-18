@@ -182,13 +182,9 @@
                                         "{{ $sub->notes ?: 'No notes provided.' }}"
                                     </div>
                                     <div class="flex space-x-4 text-sm font-medium">
-                                        <a href="{{ route('secure.file', [$sub->id, 'mov']) }}" target="_blank" class="flex items-center text-soft-primary hover:text-purple-800 transition">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            Watch Video
-                                        </a>
-                                        <a href="{{ route('secure.file', [$sub->id, 'blend']) }}" download class="flex items-center text-soft-info hover:text-cyan-600 transition">
+                                        <a href="{{ route('secure.file', $sub->id) }}" target="_blank" class="flex items-center text-soft-primary hover:text-purple-800 transition">
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                            Download .blend
+                                            Download / Open File
                                         </a>
                                     </div>
                                 </div>

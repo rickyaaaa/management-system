@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class DownloadController extends Controller
 {
-    public function download(Submission $submission, $type)
+    public function download(Submission $submission)
     {
         $task = $submission->task;
         $user = auth()->user();
@@ -18,18 +18,23 @@ class DownloadController extends Controller
             abort(403, 'Unauthorized. This is not your task.');
         }
 
-        $path = $type === 'blend' ? $submission->file_blend_url : $submission->file_mov_url;
-        
-        if (!Storage::disk('submissions')->exists($path)) {
+        $path = $submission->file_url;
+
+        if (!$path || !Storage::disk('submissions')->exists($path)) {
             abort(404, 'File not found.');
         }
 
-        if ($type === 'blend') {
-            $filename = \Illuminate\Support\Str::slug($task->title) . '_v' . $submission->version . '.blend';
-            return response()->download(Storage::disk('submissions')->path($path), $filename);
-        } else {
-            // Stream the video (allows seeking in custom video players)
+        $ext      = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+        $slug     = \Illuminate\Support\Str::slug($task->title);
+        $filename = "{$slug}_v{$submission->version}.{$ext}";
+
+        $videoTypes = ['mp4', 'mov', 'avi', 'webm'];
+
+        if (in_array($ext, $videoTypes)) {
+            // Stream video (allows seeking in players)
             return response()->file(Storage::disk('submissions')->path($path));
         }
+
+        return response()->download(Storage::disk('submissions')->path($path), $filename);
     }
 }

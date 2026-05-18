@@ -232,8 +232,7 @@
                                     </div>
                                     <p class="text-sm text-gray-600 italic mb-3">"{{ $sub->notes ?: 'No notes' }}"</p>
                                     <div class="flex space-x-4 text-sm font-medium">
-                                        <a href="{{ route('secure.file', [$sub->id, 'mov']) }}" target="_blank" class="text-soft-primary hover:text-purple-800 transition">▶ Video</a>
-                                        <a href="{{ route('secure.file', [$sub->id, 'blend']) }}" download class="text-soft-info hover:text-cyan-600 transition">↓ .blend</a>
+                                        <a href="{{ route('secure.file', $sub->id) }}" target="_blank" class="text-soft-primary hover:text-purple-800 transition">⬇ Download File</a>
                                     </div>
                                 </div>
                                 @endforeach

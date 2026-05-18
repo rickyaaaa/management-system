@@ -88,19 +88,18 @@ class MyTaskResource extends Resource
                     ->color('success')
                     ->visible(fn (Task $record): bool => in_array($record->status, ['pending', 'in_progress', 'revision']))
                     ->form([
-                        FileUpload::make('file_blend')
-                            ->label('Blend File (.blend)')
+                        FileUpload::make('file_submission')
+                            ->label('File Submission (.blend / .mp4 / .mov)')
                             ->disk('submissions')
-                            ->directory('blend')
+                            ->directory('files')
+                            ->acceptedFileTypes([
+                                'application/octet-stream', // .blend
+                                'video/mp4',
+                                'video/quicktime',
+                                'video/x-msvideo',
+                            ])
                             ->maxSize(512000)
-                            ->required(),
-
-                        FileUpload::make('file_mov')
-                            ->label('Preview Video (.mp4 / .mov)')
-                            ->disk('submissions')
-                            ->directory('video')
-                            ->acceptedFileTypes(['video/mp4', 'video/quicktime', 'video/x-msvideo'])
-                            ->maxSize(512000)
+                            ->helperText('Upload satu file: Blender (.blend) atau video preview (.mp4/.mov).')
                             ->required(),
 
                         Textarea::make('notes')
@@ -114,9 +113,8 @@ class MyTaskResource extends Resource
                             'task_id'       => $record->id,
                             'production_id' => auth()->id(),
                             'version'       => $record->version,
-                            'file_blend_url' => $data['file_blend'],
-                            'file_mov_url'   => $data['file_mov'],
-                            'notes'          => $data['notes'] ?? null,
+                            'file_url'      => $data['file_submission'],
+                            'notes'         => $data['notes'] ?? null,
                         ]);
 
                         $record->update(['status' => 'awaiting_review']);
@@ -131,7 +129,7 @@ class MyTaskResource extends Resource
 
                         \Filament\Notifications\Notification::make()
                             ->title('Work submitted successfully!')
-                            ->body('Your files have been sent to the reviewer.')
+                            ->body('Your file has been sent to the reviewer.')
                             ->success()
                             ->send();
                     }),
