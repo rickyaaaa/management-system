@@ -35,8 +35,8 @@ class ProductionSeeder extends Seeder
             'task_id' => $task1->id,
             'production_id' => $production->id,
             'version' => 1,
-            'file_blend_url' => 'dummy.blend',
-            'file_mov_url' => 'dummy.mov',
+            'blend_url' => 'dummy.blend',
+            'video_url' => 'dummy.mov',
             'notes' => 'Here is the final high poly.'
         ]);
         TaskLog::create(['task_id' => $task1->id, 'user_id' => $admin->id, 'previous_status' => 'ready_for_admin', 'new_status' => 'completed', 'action_note' => 'Looks great, marking completed.']);
@@ -56,8 +56,8 @@ class ProductionSeeder extends Seeder
             'task_id' => $task2->id,
             'production_id' => $production->id,
             'version' => 1,
-            'file_blend_url' => 'dummy.blend',
-            'file_mov_url' => 'dummy.mov',
+            'blend_url' => 'dummy.blend',
+            'video_url' => 'dummy.mov',
             'notes' => 'First pass texture.'
         ]);
         TaskLog::create(['task_id' => $task2->id, 'user_id' => $reviewer->id, 'previous_status' => 'awaiting_review', 'new_status' => 'revision', 'action_note' => 'Revision requested: [00:15] Skin too clean.']);
@@ -90,8 +90,8 @@ class ProductionSeeder extends Seeder
             'task_id' => $task4->id,
             'production_id' => $production->id,
             'version' => 2,
-            'file_blend_url' => 'dummy.blend',
-            'file_mov_url' => 'dummy.mov',
+            'blend_url' => 'dummy.blend',
+            'video_url' => 'dummy.mov',
             'notes' => 'Fixed the foot sliding issue.'
         ]);
         TaskLog::create(['task_id' => $task4->id, 'user_id' => $production->id, 'previous_status' => 'revision', 'new_status' => 'awaiting_review', 'action_note' => 'Resubmitted fixed animation.']);
@@ -111,8 +111,8 @@ class ProductionSeeder extends Seeder
             'task_id' => $task5->id,
             'production_id' => $production->id,
             'version' => 1,
-            'file_blend_url' => 'dummy.blend',
-            'file_mov_url' => 'dummy.mov',
+            'blend_url' => 'dummy.blend',
+            'video_url' => 'dummy.mov',
             'notes' => 'First pass lighting.'
         ]);
         TaskLog::create(['task_id' => $task5->id, 'user_id' => $reviewer->id, 'previous_status' => 'awaiting_review', 'new_status' => 'ready_for_admin', 'action_note' => 'Approved by QC']);
