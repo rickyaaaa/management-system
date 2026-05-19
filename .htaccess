@@ -1,0 +1,23 @@
+<IfModule mod_rewrite.c>
+    <RequireAll>
+        Options -MultiViews -Indexes
+        RewriteEngine On
+
+        # Kirim request ke public/index.php (Hostinger web root = public_html/)
+        RewriteCond %{REQUEST_URI} !^/public/
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteRule ^(.*)$ public/$1 [L]
+
+        # Fallback untuk file statis di public/
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteRule ^ public/index.php [L]
+    </RequireAll>
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>
