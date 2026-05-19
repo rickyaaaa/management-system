@@ -95,24 +95,30 @@ class ReviewResource extends Resource
                     ->modalHeading('Approve Submission')
                     ->modalDescription('This will forward the task to the admin as ready.')
                     ->action(function (Submission $record): void {
+                        // Fix 2: Null-safe guard
+                        if (! $record->task) return;
+
                         $oldStatus = $record->task->status;
 
-                        Review::create([
-                            'submission_id' => $record->id,
-                            'reviewer_id'   => auth()->id(),
-                            'status'        => 'approved',
-                            'feedback'      => null,
-                        ]);
+                        // Fix 3: Wrap all writes in a transaction for atomicity
+                        \DB::transaction(function () use ($record, $oldStatus) {
+                            Review::create([
+                                'submission_id' => $record->id,
+                                'reviewer_id'   => auth()->id(),
+                                'status'        => 'approved',
+                                'feedback'      => null,
+                            ]);
 
-                        $record->task->update(['status' => 'ready_for_admin']);
+                            $record->task->update(['status' => 'ready_for_admin']);
 
-                        TaskLog::create([
-                            'task_id'         => $record->task_id,
-                            'user_id'         => auth()->id(),
-                            'previous_status' => $oldStatus,
-                            'new_status'      => 'ready_for_admin',
-                            'action_note'     => 'Approved by reviewer. Forwarded to admin.',
-                        ]);
+                            TaskLog::create([
+                                'task_id'         => $record->task_id,
+                                'user_id'         => auth()->id(),
+                                'previous_status' => $oldStatus,
+                                'new_status'      => 'ready_for_admin',
+                                'action_note'     => 'Approved by reviewer. Forwarded to admin.',
+                            ]);
+                        });
 
                         \Filament\Notifications\Notification::make()
                             ->title('Submission approved!')
@@ -133,25 +139,34 @@ class ReviewResource extends Resource
                             ->rows(4),
                     ])
                     ->action(function (Submission $record, array $data): void {
+                        // Fix 2: Null-safe guard
+                        if (! $record->task) return;
+
                         $oldStatus = $record->task->status;
 
-                        Review::create([
-                            'submission_id' => $record->id,
-                            'reviewer_id'   => auth()->id(),
-                            'status'        => 'rejected',
-                            'feedback'      => $data['feedback'],
-                        ]);
+                        // Fix 3: Wrap all writes in a transaction for atomicity
+                        \DB::transaction(function () use ($record, $data, $oldStatus) {
+                            Review::create([
+                                'submission_id' => $record->id,
+                                'reviewer_id'   => auth()->id(),
+                                'status'        => 'rejected',
+                                'feedback'      => $data['feedback'],
+                            ]);
 
-                        $record->task->increment('version');
-                        $record->task->update(['status' => 'revision']);
+                            // Fix 2: Single update() — no N+1, no memory desync
+                            $record->task->update([
+                                'version' => $record->task->version + 1,
+                                'status'  => 'revision',
+                            ]);
 
-                        TaskLog::create([
-                            'task_id'         => $record->task_id,
-                            'user_id'         => auth()->id(),
-                            'previous_status' => $oldStatus,
-                            'new_status'      => 'revision',
-                            'action_note'     => "Rejected: {$data['feedback']}",
-                        ]);
+                            TaskLog::create([
+                                'task_id'         => $record->task_id,
+                                'user_id'         => auth()->id(),
+                                'previous_status' => $oldStatus,
+                                'new_status'      => 'revision',
+                                'action_note'     => "Rejected: {$data['feedback']}",
+                            ]);
+                        });
 
                         \Filament\Notifications\Notification::make()
                             ->title('Submission rejected')

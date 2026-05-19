@@ -40,6 +40,12 @@ class TaskResource extends Resource
         return auth()->user()?->role_level === 1;
     }
 
+    // Fix 1: Eager-load assignee to prevent N+1 queries
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['assignee']);
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema->components([
