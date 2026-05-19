@@ -188,8 +188,8 @@
                                         </a>
                                         @endif
                                         @if($sub->video_url)
-                                        <a href="{{ route('secure.file', $sub->id) }}?type=video" target="_blank" class="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-blue-700 hover:bg-blue-100 transition font-semibold">
-                                            🎬 Putar / Download Video
+                                        <a href="{{ route('secure.file', $sub->id) }}?type=video" class="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-blue-700 hover:bg-blue-100 transition font-semibold">
+                                            🎬 Download Video
                                         </a>
                                         @endif
                                         @if(!$sub->blend_url && !$sub->video_url)

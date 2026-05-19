@@ -111,6 +111,44 @@ class TaskResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->filters([])
             ->recordActions([
+                // ── View latest submission files ─────────────────────────────
+                \Filament\Actions\Action::make('admin_view_files')
+                    ->label('View Files')
+                    ->icon(Heroicon::OutlinedArrowDownTray)
+                    ->color('info')
+                    ->visible(fn (Task $record): bool => in_array($record->status, ['ready_for_admin', 'completed']))
+                    ->modalHeading(fn (Task $record): string => "Files — {$record->title} v{$record->version}")
+                    ->modalContent(function (Task $record) {
+                        $submission = $record->submissions()->latest()->first();
+                        if (!$submission) {
+                            return new \Illuminate\Support\HtmlString(
+                                '<p class="text-sm text-gray-500 italic p-4 text-center">Belum ada submission untuk task ini.</p>'
+                            );
+                        }
+                        return view('filament.submission-files', ['submission' => $submission]);
+                    })
+                    ->modalSubmitAction(false),
+
+                // ── View review result (approved / feedback) ──────────────────
+                \Filament\Actions\Action::make('admin_view_review')
+                    ->label('Review Result')
+                    ->icon(Heroicon::OutlinedClipboardDocumentCheck)
+                    ->color('success')
+                    ->visible(fn (Task $record): bool => in_array($record->status, ['ready_for_admin', 'completed']))
+                    ->modalHeading(fn (Task $record): string => "Review Result — {$record->title}")
+                    ->modalContent(function (Task $record) {
+                        // Get latest submission then its latest review
+                        $submission = $record->submissions()->latest()->first();
+                        $review = $submission?->reviews()->latest()->first();
+
+                        return new \Illuminate\Support\HtmlString(view('filament.admin-review-result', [
+                            'task'       => $record,
+                            'submission' => $submission,
+                            'review'     => $review,
+                        ])->render());
+                    })
+                    ->modalSubmitAction(false),
+
                 EditAction::make(),
                 DeleteAction::make(),
             ])

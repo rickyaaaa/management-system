@@ -18,9 +18,8 @@
         <div class="mb-1 text-xs font-semibold uppercase tracking-wider text-gray-400">🎬 Video Preview (.mp4 / .mov)</div>
         <div class="font-mono text-gray-700 break-all">{{ basename($submission->video_url) }}</div>
         <a href="{{ route('secure.file', $submission->id) }}?type=video"
-           target="_blank"
            class="mt-2 inline-flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700">
-            ▶ Putar / Download Video
+            ⬇ Download Video
         </a>
     </div>
     @endif

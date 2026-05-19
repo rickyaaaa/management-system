@@ -44,13 +44,7 @@ class DownloadController extends Controller
         $slug     = \Illuminate\Support\Str::slug($task->title);
         $filename = "{$slug}_v{$submission->version}.{$ext}";
 
-        $videoTypes = ['mp4', 'mov', 'avi', 'webm'];
-
-        if (in_array($ext, $videoTypes)) {
-            // Stream video so it's seekable in browser players
-            return response()->file(Storage::disk('submissions')->path($path));
-        }
-
+        // Always force download — no inline streaming
         return response()->download(Storage::disk('submissions')->path($path), $filename);
     }
 }
