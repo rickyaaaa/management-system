@@ -25,13 +25,7 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
-
-    protected static ?string $navigationLabel = 'Kelola Hak Akses';
-
-    protected static string|UnitEnum|null $navigationGroup = 'Admin Panel';
-
-    protected static ?int $navigationSort = 3;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $modelLabel = 'Role';
 
