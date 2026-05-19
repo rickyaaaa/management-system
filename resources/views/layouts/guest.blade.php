@@ -17,10 +17,8 @@
     <body class="font-sans antialiased bg-gray-50 text-gray-950 min-h-screen flex items-center justify-center">
         <div class="w-full sm:max-w-md px-6 py-12 lg:px-8 flex flex-col justify-center">
             <div class="sm:mx-auto sm:w-full sm:max-w-sm flex justify-center mb-8">
-                <a href="/" wire:navigate>
-                    <div class="w-12 h-12 bg-amber-500 rounded-xl shadow-sm flex items-center justify-center font-bold text-white text-xl ring-1 ring-black/10">
-                        3D
-                    </div>
+            <a href="/" wire:navigate>
+                    <img src="{{ asset('images/logo.png') }}" alt="Bigant's Studio" class="h-36 w-auto drop-shadow-md">
                 </a>
             </div>
 

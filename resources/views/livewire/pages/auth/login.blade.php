@@ -27,7 +27,7 @@ new #[Layout('layouts.guest')] class extends Component
 <div>
     <div class="text-center mb-8">
         <h2 class="text-2xl font-bold tracking-tight text-gray-950">
-            Sign in
+            Welcome User
         </h2>
     </div>
 

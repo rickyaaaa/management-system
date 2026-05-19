@@ -8,6 +8,11 @@ use Filament\Auth\Pages\Login as BasePage;
 
 class Login extends BasePage
 {
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        return 'Welcome User';
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema

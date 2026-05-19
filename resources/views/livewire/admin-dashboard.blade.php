@@ -181,11 +181,20 @@
                                     <div class="text-sm text-gray-600 bg-white p-3 border-0 rounded-lg mb-3 shadow-soft-sm italic">
                                         "{{ $sub->notes ?: 'No notes provided.' }}"
                                     </div>
-                                    <div class="flex space-x-4 text-sm font-medium">
-                                        <a href="{{ route('secure.file', $sub->id) }}" target="_blank" class="flex items-center text-soft-primary hover:text-purple-800 transition">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                            Download / Open File
+                                    <div class="flex flex-wrap gap-2 text-sm font-medium mt-1">
+                                        @if($sub->blend_url)
+                                        <a href="{{ route('secure.file', $sub->id) }}?type=blend" class="inline-flex items-center gap-1 rounded-lg bg-indigo-50 px-3 py-1.5 text-indigo-700 hover:bg-indigo-100 transition font-semibold">
+                                            📦 Download .blend
                                         </a>
+                                        @endif
+                                        @if($sub->video_url)
+                                        <a href="{{ route('secure.file', $sub->id) }}?type=video" target="_blank" class="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-blue-700 hover:bg-blue-100 transition font-semibold">
+                                            🎬 Putar / Download Video
+                                        </a>
+                                        @endif
+                                        @if(!$sub->blend_url && !$sub->video_url)
+                                        <span class="text-gray-400 italic text-xs">Tidak ada file.</span>
+                                        @endif
                                     </div>
                                 </div>
                                 @endforeach

@@ -10,7 +10,6 @@ use Filament\Schemas\Schema;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Section;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Actions\ViewAction;
@@ -88,32 +87,48 @@ class MyTaskResource extends Resource
                     ->color('success')
                     ->visible(fn (Task $record): bool => in_array($record->status, ['pending', 'in_progress', 'revision']))
                     ->form([
-                        FileUpload::make('file_submission')
-                            ->label('File Submission (.blend / .mp4 / .mov)')
+                        FileUpload::make('blend_submission')
+                            ->label('Blender File (.blend)')
                             ->disk('submissions')
                             ->directory('files')
-                            ->acceptedFileTypes([
-                                'application/octet-stream', // .blend
-                                'video/mp4',
-                                'video/quicktime',
-                                'video/x-msvideo',
-                            ])
+                            ->rules(['nullable', 'extensions:blend'])
                             ->maxSize(512000)
-                            ->helperText('Upload satu file: Blender (.blend) atau video preview (.mp4/.mov).')
-                            ->required(),
+                            ->helperText('Opsional — upload file .blend jika ada.')
+                            ->nullable(),
+
+                        FileUpload::make('video_submission')
+                            ->label('Video Preview (.mp4 / .mov)')
+                            ->disk('submissions')
+                            ->directory('files')
+                            ->acceptedFileTypes(['video/mp4', 'video/quicktime', 'video/x-msvideo'])
+                            ->maxSize(512000)
+                            ->helperText('Opsional — upload file video preview jika ada.')
+                            ->nullable(),
 
                         Textarea::make('notes')
                             ->label('Notes (optional)')
                             ->rows(3),
                     ])
-                    ->action(function (Task $record, array $data): void {
+                    ->action(function (Task $record, array $data, \Filament\Actions\Action $action): void {
+                        // Validate: at least one file must be uploaded
+                        if (empty($data['blend_submission']) && empty($data['video_submission'])) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('File diperlukan!')
+                                ->body('Upload minimal satu file: .blend atau video preview (.mp4/.mov).')
+                                ->danger()
+                                ->send();
+                            $action->halt();
+                            return;
+                        }
+
                         $oldStatus = $record->status;
 
                         $submission = Submission::create([
                             'task_id'       => $record->id,
                             'production_id' => auth()->id(),
                             'version'       => $record->version,
-                            'file_url'      => $data['file_submission'],
+                            'blend_url'     => $data['blend_submission'] ?? null,
+                            'video_url'     => $data['video_submission'] ?? null,
                             'notes'         => $data['notes'] ?? null,
                         ]);
 
@@ -129,7 +144,7 @@ class MyTaskResource extends Resource
 
                         \Filament\Notifications\Notification::make()
                             ->title('Work submitted successfully!')
-                            ->body('Your file has been sent to the reviewer.')
+                            ->body('File berhasil dikirim ke reviewer.')
                             ->success()
                             ->send();
                     }),

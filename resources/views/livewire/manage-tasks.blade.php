@@ -231,8 +231,20 @@
                                         <span class="text-xs text-gray-500">{{ $sub->created_at->format('M d, Y H:i') }}</span>
                                     </div>
                                     <p class="text-sm text-gray-600 italic mb-3">"{{ $sub->notes ?: 'No notes' }}"</p>
-                                    <div class="flex space-x-4 text-sm font-medium">
-                                        <a href="{{ route('secure.file', $sub->id) }}" target="_blank" class="text-soft-primary hover:text-purple-800 transition">⬇ Download File</a>
+                                    <div class="flex flex-wrap gap-2 text-sm font-medium">
+                                        @if($sub->blend_url)
+                                        <a href="{{ route('secure.file', $sub->id) }}?type=blend" class="inline-flex items-center gap-1 rounded-lg bg-indigo-50 px-3 py-1.5 text-indigo-700 hover:bg-indigo-100 transition font-semibold">
+                                            📦 Download .blend
+                                        </a>
+                                        @endif
+                                        @if($sub->video_url)
+                                        <a href="{{ route('secure.file', $sub->id) }}?type=video" target="_blank" class="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-1.5 text-blue-700 hover:bg-blue-100 transition font-semibold">
+                                            🎬 Putar / Download Video
+                                        </a>
+                                        @endif
+                                        @if(!$sub->blend_url && !$sub->video_url)
+                                        <span class="text-gray-400 italic text-xs">Tidak ada file.</span>
+                                        @endif
                                     </div>
                                 </div>
                                 @endforeach

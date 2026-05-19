@@ -16,14 +16,27 @@ class Submission extends Model
     public function production() { return $this->belongsTo(User::class, 'production_id'); }
     public function reviews() { return $this->hasMany(Review::class); }
 
+    /**
+     * Returns the primary file path (blend first, then video) for size calculation.
+     */
     public function getFileSizeAttribute()
     {
+        $path = $this->blend_url ?? $this->video_url;
+        if (!$path) return 'Unknown';
         try {
-            $bytes = \Illuminate\Support\Facades\Storage::disk('submissions')->size($this->file_url);
+            $bytes = \Illuminate\Support\Facades\Storage::disk('submissions')->size($path);
             return \Illuminate\Support\Number::fileSize($bytes);
         } catch (\Exception $e) {
             return 'Unknown';
         }
+    }
+
+    /**
+     * Returns true if the submission has at least one file.
+     */
+    public function hasAnyFile(): bool
+    {
+        return !empty($this->blend_url) || !empty($this->video_url);
     }
 }
 

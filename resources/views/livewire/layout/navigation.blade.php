@@ -21,9 +21,8 @@ new class extends Component
     <div>
         <!-- Logo -->
         <div class="h-20 flex items-center px-6 border-b border-gray-50">
-            <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center space-x-3">
-                <x-application-logo class="block h-9 w-auto fill-current text-soft-dark" />
-                <span class="text-lg font-bold text-soft-dark">{{ config('app.name', 'Laravel') }}</span>
+            <a href="{{ route('dashboard') }}" wire:navigate class="flex items-center space-x-2">
+                <img src="{{ asset('images/logo.png') }}" alt="Bigant's Studio" class="h-12 w-auto">
             </a>
         </div>
 

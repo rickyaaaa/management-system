@@ -8,17 +8,33 @@ use Illuminate\Support\Facades\Storage;
 
 class DownloadController extends Controller
 {
-    public function download(Submission $submission)
+    /**
+     * Download or stream a submission file.
+     *
+     * ?type=blend  → download the .blend file
+     * ?type=video  → stream the video file
+     * (default)    → prefers video if available, then blend
+     */
+    public function download(Submission $submission, Request $request)
     {
         $task = $submission->task;
         $user = auth()->user();
 
-        // Security Check: Only involved users (Admin, Reviewer, or specific Assignee) can access.
+        // Security: Level-2 users can only access their own tasks
         if ($user->role_level == 2 && $task->assignee_id !== $user->id) {
             abort(403, 'Unauthorized. This is not your task.');
         }
 
-        $path = $submission->file_url;
+        $type = $request->query('type', null);
+
+        if ($type === 'blend') {
+            $path = $submission->blend_url;
+        } elseif ($type === 'video') {
+            $path = $submission->video_url;
+        } else {
+            // Auto: prefer video for preview experience, fall back to blend
+            $path = $submission->video_url ?? $submission->blend_url;
+        }
 
         if (!$path || !Storage::disk('submissions')->exists($path)) {
             abort(404, 'File not found.');
@@ -31,7 +47,7 @@ class DownloadController extends Controller
         $videoTypes = ['mp4', 'mov', 'avi', 'webm'];
 
         if (in_array($ext, $videoTypes)) {
-            // Stream video (allows seeking in players)
+            // Stream video so it's seekable in browser players
             return response()->file(Storage::disk('submissions')->path($path));
         }
 
